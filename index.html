@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6f9a82">
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg">
+<title>Évolution</title>
+<style>
+:root{--bg:#f5f1ea;--card:#fffdf8;--tx:#2d3a33;--mu:#7b867f;--ac:#6f9a82;--bd:#e6e0d3}
+[data-theme=dark]{--bg:#161c19;--card:#1f2824;--tx:#e8eee9;--mu:#8fa096;--ac:#86b59a;--bd:#2d3a34}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,sans-serif;padding-bottom:88px;transition:background .4s}
+header{display:flex;justify-content:space-between;align-items:center;max-width:560px;margin:auto;padding:calc(14px + env(safe-area-inset-top)) 16px 0}
+h1{margin:0;font-weight:600;letter-spacing:.5px;font-size:26px}
+main{max-width:560px;margin:auto;padding:12px 16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:22px;padding:16px;margin:0 0 14px;animation:in .5s both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.row{display:flex;align-items:center;gap:14px}.sp{justify-content:space-between;margin-bottom:14px}
+.mu{color:var(--mu);font-size:14px}.q{font-style:italic;color:var(--mu);font-size:14px;margin:6px 0 14px}
+.wheel{width:62px;height:62px;border-radius:50%;flex:none;position:relative;transition:transform 2.4s cubic-bezier(.12,.7,.1,1);background:repeating-conic-gradient(var(--c) 0 30deg,color-mix(in srgb,var(--c) 35%,var(--card)) 0 60deg)}
+.wheel:after{content:'';position:absolute;inset:36%;border-radius:50%;background:var(--card)}
+.wrap{position:relative}.wrap:before{content:'';position:absolute;top:-6px;left:50%;margin-left:-5px;border:5px solid transparent;border-top:8px solid var(--tx);z-index:2}
+.btn{border:0;border-radius:14px;padding:10px 14px;background:var(--ac);color:#fff;font:inherit;cursor:pointer}
+.ghost{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.opt{display:block;width:100%;text-align:left;margin-top:8px}
+.big{font-size:18px;margin:14px 0}.dn{opacity:.6}
+.w{opacity:0;animation:in .6s forwards;display:inline-block;margin-right:.28em}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;background:none;color:var(--mu);padding:10px 0;font:12px system-ui;cursor:pointer}
+nav button b{display:block;font-size:20px;font-weight:400}nav .on{color:var(--ac)}
+.bl{display:flex;align-items:center;gap:8px;font-size:14px;margin:6px 0}.bl span{width:92px}.tr{flex:1;height:8px;background:var(--bd);border-radius:4px}
+.bar{height:8px;border-radius:4px;transition:width .8s}
+.ch{display:flex;gap:8px;align-items:flex-end;height:100px}.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;align-items:center;font-size:12px;color:var(--mu)}
+.cb{width:100%;background:var(--ac);border-radius:6px;min-height:3px}
+textarea{width:100%;border:1px solid var(--bd);border-radius:12px;background:var(--bg);color:var(--tx);font:inherit;padding:8px;margin:4px 0 10px}
+label{font-size:14px;color:var(--mu)}summary{cursor:pointer;font-weight:600}h3{margin:18px 0 8px}
+</style></head><body>
+<header><h1>Évolution</h1><button class="btn ghost" id="th" aria-label="Thème">◐</button></header>
+<main id="m"></main>
+<nav>
+<button data-t="home"><b>◎</b>Aujourd’hui</button><button data-t="bilan"><b>▤</b>Bilan</button>
+<button data-t="emo"><b>❀</b>Émotions</button><button data-t="jour"><b>✎</b>Journal</button>
+<button data-t="cerv"><b>✺</b>Cerveau</button></nav>
+<script>
+const $=s=>document.querySelector(s),K='evolution_v1',D=864e5;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sample=(a,n)=>a.slice().sort(()=>Math.random()-.5).slice(0,n);
+const L=s=>s.split('|');
+const C=[
+{n:'Dopamine',c:'#e0a458',d:'Motivation, apprentissage, progression',a:L(`Apprends 5 mots dans une langue qui t’attire|Regarde un tutoriel et essaie tout de suite|Termine une petite chose en 10 min et savoure-la|Fixe-toi un mini-défi sportif et bats-le|Apprends un nouvel accord à la guitare|Travaille 15 min un skill de callisthénie|Écris trois petites victoires récentes|Résous une énigme ou un sudoku|Apprends une astuce de ton outil préféré|Lis 10 pages d’un livre qui te plaît|Range un seul tiroir et admire le résultat|Écoute un podcast et retiens une idée|Teste une recette inédite|Chronomètre-toi sur un exercice et améliore ton temps|Apprends à faire un nœud ou un geste utile|Regarde un documentaire court|Crée une playlist qui te donne de l’élan|Apprends le nom de 5 constellations|Mémorise un poème ou une citation|Prévois une petite récompense pour ce week-end|Essaie un nouveau raccourci ou outil|Dessine le plan de ton espace idéal|Apprends à jongler ou un tour de magie|Note une chose que tu fais mieux qu’il y a un an|Choisis un petit projet et fais la première étape`)},
+{n:'Ocytocine',c:'#d98b8b',d:'Relations, affection, générosité',a:L(`Appelle un proche sans raison particulière|Envoie un message sincère de remerciement|Serre quelqu’un dans tes bras|Propose un café ou une marche à un ami|Fais un compliment sincère|Écris une lettre ou une carte à la main|Prends des nouvelles de quelqu’un perdu de vue|Aide quelqu’un sans qu’il le demande|Partage un repas, téléphones rangés|Écoute quelqu’un 10 min sans l’interrompre|Câline ou joue avec un animal|Offre un petit cadeau inattendu|Envoie un vocal chaleureux|Souris et salue trois inconnus|Raconte un souvenir heureux à un proche|Demande à quelqu’un ce qui le rend heureux|Remercie quelqu’un en face|Fais un petit don ou un geste généreux|Propose un jeu de société|Regarde de vieilles photos avec quelqu’un|Cuisine pour quelqu’un|Laisse passer, sois patient avec bienveillance|Dis à quelqu’un ce que tu apprécies chez lui|Fais découvrir ta passion à quelqu’un|Pardonne un petit agacement`)},
+{n:'Sérotonine',c:'#d9b84a',d:'Lumière, nature, équilibre',a:L(`Sors 15 min à la lumière du jour|Marche sans musique|Observe le ciel 5 minutes|Assieds-toi dans un parc ou sous un arbre|Respire lentement 3 minutes dehors|Déjeune près d’une fenêtre ensoleillée|Regarde le coucher du soleil|Marche pieds nus sur l’herbe ou le sable|Écoute les bruits de la nature 5 min|Regarde la mer ou un cours d’eau|Mange un repas calmement, sans écran|Fais une pause lumière entre deux tâches|Prends une douche tiède en pleine conscience|Aère ton espace 10 minutes|Observe une plante de près|Fais une sieste courte de 20 min|Bois une boisson chaude en savourant|Fais un scan corporel de 5 minutes|Observe les étoiles|Promène-toi sans destination|Sors à l’aube ou au crépuscule|Lis dehors, à la lumière|Étire-toi au soleil|Trouve cinq belles choses autour de toi|Installe-toi dehors pour écrire ou rêver`)},
+{n:'Endorphines',c:'#e07a5f',d:'Mouvement, danse, plaisir',a:L(`Fais une séance de mobilité de 10 min|Danse sur 3 morceaux à fond|Fais un circuit de callisthénie|Marche d’un bon pas 20 minutes|Saute 5 min (corde ou sur place)|Chante à pleine voix|Fais un défi pompes ou tractions progressif|Joue de la batterie ou tape un rythme|Fais un trajet à vélo ou à pied|Monte des escaliers 5 fois|Fais du yoga ou des étirements|Joue à un sport avec quelqu’un|Fais 10 min de shadow boxing|Tiens une planche et bats ton record|Pratique ton handstand 10 min|Cours doucement 15 min|Fais un échauffement articulaire complet|Fais un flow d’équilibre sur une jambe|Nage ou barbote si tu peux|Fais un parcours dans ton quartier|Regarde un sketch drôle et ris|Fais 5 min de squats lents|Fais des étirements profonds le soir|Joue avec un ballon|Marche par un chemin nouveau`)},
+{n:'Créativité',c:'#9b7fc4',d:'Musique, photo, écriture, imagination',a:L(`Photographie un paysage|Écris 10 lignes sans te relire|Fredonne ou compose une mélodie|Dessine l’objet le plus proche|Invente une histoire en 5 phrases|Prends 5 photos d’un même détail|Improvise à la guitare|Écris un haïku sur ta journée|Fais un collage avec ce que tu as|Invente un personnage et son univers|Filme 10 s de ton quotidien joliment|Réécris une chanson avec tes mots|Cuisine sans recette|Dessine un rêve de cette nuit|Crée un morceau avec des sons du quotidien|Écris une lettre à toi dans 5 ans|Photographie en noir et blanc|Invente un jeu avec trois objets|Dessine avec la main non dominante|Décris un lieu avec tes 5 sens|Imagine la déco de ta pièce idéale|Fais le portrait d’un proche en mots|Crée un rythme avec tes mains|Écris des questions sans réponse|Transforme un déchet en objet utile ou joli`)},
+{n:'Mental',c:'#5f9ea0',d:'Confiance, émotions, lâcher-prise',a:L(`Nomme ton émotion et où tu la sens|Écris une pensée en boucle et réponds-lui comme à un ami|Respire en 4-6 pendant 3 minutes|Liste 3 qualités que tu as vraiment|Pose une inquiétude : agir ou lâcher ?|Demande-toi : qu’est-ce que je peux contrôler ?|Dis-toi une phrase bienveillante|Fais l’exercice des 5 sens (5-4-3-2-1)|Écris ce que tu as réussi malgré le doute|Éloigne-toi des réseaux 1 heure|Observe une pensée comme un nuage qui passe|Remercie le toi d’il y a un an|Imagine ce que dirait un ami bienveillant|Prends une décision simple sans demander d’avis|Écris ce que tu ressens sans te juger|Accepte une imperfection aujourd’hui|Mets en pause un compte qui te fait te comparer|Médite 5 minutes, guidé ou en silence|Écris une chose que tu laisses derrière toi|Pose une limite douce à quelqu’un|Rappelle-toi un moment où tu as été fier|Regarde ta journée sans la noter|Attends avant de répondre à un message|Écris ce que tu apprécies en toi|Fais une activité seul et savoure-la`)},
+{n:'Découverte',c:'#6f9a82',d:'Curiosité, exploration, sorties de routine',a:L(`Découvre un lieu proche jamais visité|Prends un chemin différent aujourd’hui|Goûte un aliment jamais essayé|Fais une activité sans téléphone|Apprends un fait surprenant et partage-le|Écoute en entier un genre musical inconnu|Visite un petit commerce ou un marché|Pose une question à un inconnu bienveillant|Regarde un film d’un pays que tu ne connais pas|Apprends à dire bonjour en 5 langues|Explore Wikipédia à partir d’un mot au hasard|Va voir un point de vue panoramique|Essaie un nouveau sport ou une nouvelle posture|Lis une page sur un sujet nouveau|Change l’ordre de ta routine du matin|Visite un lieu en ligne (musée, grotte, planète)|Demande une recommandation et essaie-la|Fais un trajet avec un transport différent|Regarde ta ville comme un touriste|Apprends l’histoire d’un lieu proche|Cuisine un plat d’une autre culture|Passe 30 min dans un lieu sans objectif|Essaie un instrument inconnu|Découvre un artiste ou un photographe|Dis oui à une petite invitation inhabituelle`)}];
+const E=[
+['Rumination','Revenir en boucle sur une pensée donne l’impression de chercher une solution, mais tourne souvent à vide.','« J’ai mal répondu hier, je rejoue la scène sans fin. »','Écris la pensée. Demande-toi : « Y a-t-il une action utile ? » Si oui, note-la ; sinon, dirige ton attention vers un geste concret (marcher, ranger, respirer).'],
+['Hypersensibilité et émotions','Ressentir fort n’est pas un défaut. L’enjeu est d’accueillir l’émotion sans qu’elle décide à ta place.','Une remarque te touche et tu veux t’isoler.','Nomme l’émotion, repère où elle se loge dans le corps, expire lentement 6 secondes, attends 10 minutes avant de réagir.'],
+['Jalousie','Elle signale souvent un désir ou un besoin non nourri, pas une vérité sur ta valeur.','Un ami réussit et ton ventre se serre.','Demande-toi : « Qu’est-ce que cela me montre que je désire ? » Puis fais une petite action vers ce désir.'],
+['Comparaison avec les autres','On compare souvent ses coulisses à la vitrine des autres.','Tu fais défiler des profils où tout semble parfait.','Compare-toi à toi d’il y a un an : écris 3 progrès. Réduis les sources qui te laissent plus mal.'],
+['Estime de soi','Ta valeur n’a pas à se gagner par des résultats.','Après une erreur, tu te dis « je suis nul ».','Remplace par « j’ai fait une erreur et je peux apprendre ». Chaque soir, note une qualité que tu as utilisée.'],
+['Confiance en soi','Elle se construit par de petites preuves, pas par un grand déclic.','Tu hésites à partager une idée.','Choisis une action un peu inconfortable mais réaliste, fais-la, puis note ce qui s’est bien passé.'],
+['Nostalgie et passé','Le passé peut être tendre sans t’empêcher d’habiter le présent.','Un souvenir heureux te rend triste.','Remercie le souvenir, retiens ce qu’il t’a donné, puis crée aujourd’hui un petit moment qui s’en inspire.'],
+['Lâcher-prise','C’est distinguer ce que tu peux influencer de ce qui ne dépend pas de toi.','Tu attends une réponse et vérifies ton téléphone sans cesse.','Trace deux colonnes : « dépend de moi » / « ne dépend pas de moi ». Agis sur la première, respire face à la seconde.'],
+['Solitude','Être seul n’est pas être isolé. On peut y trouver du calme, ou tendre la main quand l’envie vient.','Une soirée vide te pèse.','Choisis : un moment seul savouré (musique, balade) ou un message à quelqu’un. Les deux sont valables.'],
+['Validation extérieure','Chercher l’approbation des autres peut couvrir ce que tu veux vraiment.','Tu attends des likes avant de te sentir satisfait.','Fais quelque chose que tu aimes sans le montrer, puis note ce que toi tu en as pensé.']];
+const JF=['Ma réussite du jour','Ma gratitude du jour','Mon émotion principale','Ce que j’ai appris sur moi','Ce que j’aimerais améliorer demain, en douceur'];
+const G=[['Motivation et apprentissage',[0]],['Liens sociaux',[1]],['Activités physiques',[3]],['Créativité',[4]],['Relaxation',[2,5]],['Curiosité intellectuelle',[6]]];
+let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+S=S||{ds:Date.now(),t:{},h:[],j:[],f:{},th:matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'};
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const rot={};let T='home';
+function roll(){if(Date.now()-S.ds>D){S.ds=Date.now();S.t={};save()}}
+function pool(ci){const cur=S.t[ci]&&S.t[ci].i,all=C[ci].a.map((_,i)=>i),rc=new Set(S.h.filter(x=>x.c==ci&&Date.now()-x.t<5*D).map(x=>x.i));let p=all.filter(i=>i!=cur&&!rc.has(i));if(p.length<3)p=all.filter(i=>i!=cur);return p}
+function choose(ci,i){S.h.push({c:ci,i,t:Date.now(),d:0});S.t[ci]={i,h:S.h.length-1};save()}
+function spin(ci){const w=$('#w'+ci);rot[ci]=(rot[ci]||0)+1080+Math.random()*360;w.style.transform=`rotate(${rot[ci]}deg)`;$('#r'+ci).innerHTML='<p class=mu>La roulette tourne…</p>';setTimeout(()=>{const p=pool(ci);choose(ci,p[Math.random()*p.length|0]);upd(ci,1)},2500)}
+function upd(ci,an){const t=S.t[ci],el=$('#r'+ci);if(!el)return;
+if(!t){el.innerHTML=`<button class=btn style="width:100%;margin-top:12px;background:${C[ci].c}" onclick=spin(${ci})>Tourner la roulette</button>`;return}
+const a=C[ci].a[t.i],done=S.h[t.h].d,fv=S.f[ci+'-'+t.i];
+el.innerHTML=`<p class="big ${done?'dn':''}">${an?a.split(' ').map((w,k)=>`<span class=w style="animation-delay:${k*90}ms">${esc(w)}</span>`).join(''):esc(a)}</p><div class=row style="flex-wrap:wrap;gap:8px"><button class=btn style="background:${C[ci].c}" onclick=fin(${ci})>${done?'✓ Fait':'Marquer fait'}</button><button class="btn ghost" onclick=spin(${ci})>↻ Relancer</button><button class="btn ghost" onclick=alt(${ci})>⇄ Choisir</button><button class="btn ghost" onclick=fav(${ci})>${fv?'♥':'♡'}</button></div>`}
+function fin(ci){const e=S.h[S.t[ci].h];e.d=e.d?0:1;e.t=Date.now();save();upd(ci)}
+function fav(ci){const k=ci+'-'+S.t[ci].i;S.f[k]=!S.f[k];save();upd(ci)}
+function alt(ci){const p=sample(pool(ci),3);$('#r'+ci).innerHTML='<p class=mu style="margin-bottom:0">Choisis ton défi :</p>'+p.map(i=>`<button class="btn ghost opt" onclick="pick(${ci},${i})">${esc(C[ci].a[i])}</button>`).join('')}
+function pick(ci,i){choose(ci,i);upd(ci,1)}
+function nd(){S.ds=Date.now();S.t={};save();render()}
+function H(){const hm=new Date(S.ds).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+return `<p class=q>« Je ne cherche pas à devenir quelqu’un d’autre. Je cherche à devenir une meilleure version de moi-même, sans cesser d’apprécier la personne que je suis aujourd’hui. »</p><div class="row sp"><span class=mu>Journée commencée à ${hm}</span><button class="btn ghost" onclick=nd()>☀ Nouvelle journée</button></div>`+
+C.map((c,i)=>`<div class=card style="--c:${c.c}"><div class=row><div class=wrap><div class=wheel id=w${i} style="transform:rotate(${rot[i]||0}deg)"></div></div><div><b>${c.n}</b><div class=mu>${c.d}</div></div></div><div id=r${i}></div></div>`).join('')+`<p class=mu>Aucune obligation : une roulette, plusieurs, ou aucune. Les liens avec dopamine, ocytocine, sérotonine ou endorphines sont des associations possibles avec le bien-être, jamais des garanties.</p>`}
+function B(){const now=Date.now(),dn=S.h.filter(x=>x.d),td=dn.filter(x=>x.t>=S.ds).length;
+const cnt=d=>C.map((_,i)=>dn.filter(x=>x.c==i&&now-x.t<d*D).length);
+const bars=a=>{const m=Math.max(1,...a);return C.map((c,i)=>`<div class=bl><span>${c.n}</span><div class=tr><div class=bar style="width:${a[i]/m*100}%;background:${c.c}"></div></div><b>${a[i]}</b></div>`).join('')};
+const ks=[6,5,4,3,2,1,0],wk=ks.map(k=>dn.filter(x=>now-x.t<(k+1)*D&&now-x.t>=k*D).length),mw=Math.max(1,...wk);
+const hab={};dn.forEach(x=>{const k=x.c+'-'+x.i;hab[k]=(hab[k]||0)+1});
+const hb=Object.entries(hab).filter(e=>e[1]>=3).sort((a,b)=>b[1]-a[1]);
+const fv=Object.keys(S.f).filter(k=>S.f[k]),nm=k=>{const p=k.split('-');return esc(C[p[0]].a[p[1]])};
+return `<div class=card><b>Aujourd’hui</b><p class=big>${td} défi${td>1?'s':''} réalisé${td>1?'s':''} ${td?'🌿':''}</p><span class=mu>Chaque pas compte, à ton rythme.</span></div>
+<div class=card><b>7 derniers jours</b><div class=ch style="margin-top:10px">${wk.map((v,i)=>`<div class=col><div class=cb style="height:${v/mw*100}%"></div>${new Date(now-ks[i]*D).toLocaleDateString('fr-FR',{weekday:'narrow'})}</div>`).join('')}</div></div>
+<div class=card><b>Catégories · 7 jours</b>${bars(cnt(7))}</div><div class=card><b>Catégories · 30 jours</b>${bars(cnt(30))}</div>
+<div class=card><b>Habitudes qui s’installent</b>${hb.length?hb.map(e=>`<p>${nm(e[0])} <span class=mu>×${e[1]}</span></p>`).join(''):'<p class=mu>Elles apparaîtront quand tu reviendras à un défi 3 fois.</p>'}</div>
+<div class=card><b>Mes préférés</b>${fv.length?fv.map(k=>`<p>♥ ${nm(k)}</p>`).join(''):'<p class=mu>Touche ♡ sur un défi que tu aimes.</p>'}</div>`}
+function Em(){return `<p class=mu>Des outils doux, à piocher quand tu en as envie. Ils ne remplacent pas un accompagnement professionnel si tu en ressens le besoin.</p>`+E.map(e=>`<details class=card><summary>${e[0]}</summary><p>${e[1]}</p><p><span class=mu>Exemple</span><br>${e[2]}</p><p><span class=mu>Mise en pratique</span><br>${e[3]}</p></details>`).join('')}
+function J(){return `<div class=card><b>Aujourd’hui</b><br>`+JF.map((f,i)=>`<label>${f}</label><textarea id=j${i} rows=2></textarea>`).join('')+`<button class=btn onclick=sj()>Enregistrer</button></div><h3>Anciennes entrées</h3>`+(S.j.length?S.j.map(e=>`<details class=card><summary>${new Date(e.t).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}</summary>${e.v.map((x,i)=>x?`<p><span class=mu>${JF[i]}</span><br>${esc(x)}</p>`:'').join('')}</details>`).join(''):'<p class=mu>Rien pour l’instant.</p>')}
+function sj(){const v=JF.map((_,i)=>$('#j'+i).value.trim());if(!v.some(x=>x))return;S.j.unshift({t:Date.now(),v});save();render()}
+function N(){return `<p class=mu>Des idées, pas des obligations. Les liens avec dopamine, ocytocine, sérotonine, endorphines ou endocannabinoïdes sont des associations possibles avec le bien-être.</p>`+G.map(g=>{const all=g[1].flatMap(c=>C[c].a.map(a=>[c,a]));return `<div class=card><b>${g[0]}</b>`+sample(all,3).map(x=>`<p style="border-left:4px solid ${C[x[0]].c};padding-left:10px">${esc(x[1])}</p>`).join('')+`</div>`}).join('')+`<button class=btn onclick=render()>Nouvelles idées ✨</button>`}
+function render(){roll();document.documentElement.dataset.theme=S.th;$('#m').innerHTML=({home:H,bilan:B,emo:Em,jour:J,cerv:N})[T]();if(T=='home')C.forEach((_,i)=>upd(i));
+document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==T));scrollTo(0,0)}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{T=b.dataset.t;render()});
+$('#th').onclick=()=>{S.th=S.th=='dark'?'light':'dark';save();document.documentElement.dataset.theme=S.th};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&T=='home'){const o=S.ds;roll();if(o!=S.ds)render()}});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+render();
+</script></body></html>
